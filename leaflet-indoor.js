@@ -37,32 +37,6 @@ L.Indoor = L.Layer.extend({
 
             if (onEachFeature)
                 onEachFeature(feature, layer);
-
-            if ("markerForFeature" in options) {
-                var marker = options.markerForFeature(feature);
-                if (typeof(marker) !== 'undefined') {
-                    marker.on('click', function(e) {
-                        layer.fire('click', e);
-                    });
-
-                    var level = options.getLevel(feature);
-
-                    if (typeof(level) === 'undefined') {
-                        console.warn("level undefined for");
-                        console.log(feature);
-                    } else {
-                        function addToLevel(level) {
-                            layers[level].addLayer(marker);
-                        }
-
-                        if (L.Util.isArray(level)) {
-                            level.forEach(addToLevel);
-                        } else {
-                            addToLevel(level);
-                        }
-                    }
-                }
-            }
         };
 
         this.addData(data);
