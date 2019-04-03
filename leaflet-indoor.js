@@ -1,3 +1,5 @@
+import * as L from 'leaflet'
+
 /**
  * A layer that will display indoor data
  *
@@ -71,15 +73,16 @@ L.Indoor = L.Layer.extend({
 
         this._map = null;
     },
-    addData: function(data) {
+    addData: function(data, options) {
+      L.setOptions(this, options);
+      options = this.options;
         var layers = this._layers,
-            options = this.options,
             features = L.Util.isArray(data) ? data : data.features;
 
         features.forEach(function (part) {
 
-            var level = options.getLevel(part);
-
+            // var level = options.getLevel(part);
+            var level = options.level;
             var layer;
 
             if (typeof level === 'undefined' ||
@@ -104,6 +107,7 @@ L.Indoor = L.Layer.extend({
                             type: "FeatureCollection",
                             features: []
                         }, options);
+                        layer.roomLabels = L.featureGroup()
                     }
 
                     layer.addData(part);
@@ -116,6 +120,7 @@ L.Indoor = L.Layer.extend({
                         type: "FeatureCollection",
                         features: []
                     }, options);
+                    layer.roomLabels = L.featureGroup()
                 }
 
                 layer.addData(part);
@@ -125,13 +130,35 @@ L.Indoor = L.Layer.extend({
     getLevels: function() {
         return Object.keys(this._layers);
     },
+    getLayers: function() {
+        return this._layers;
+    },
+    toggleLabels: function() {
+      if (this._map.getZoom() >= 20) {
+        var roomLayers = this._layers[this._level]._layers
+        console.log('draw labels for ' + this.options.loc + ' level ' + this._level)
+        var indoor = this
+        Object.keys(roomLayers).forEach(function(roomLayerId) {
+          if (roomLayers[roomLayerId].label) {
+            var myIcon = L.divIcon({className: 'room-label', html: roomLayers[roomLayerId].label});
+            var textPos = roomLayers[roomLayerId].getBounds().getCenter()
+            L.marker(textPos, { icon: myIcon, interactive: false }).addTo(indoor._layers[indoor._level].roomLabels);
+          }
+        })
+        indoor._layers[indoor._level].addLayer(indoor._layers[indoor._level].roomLabels);
+      } else {
+      this._layers[this._level].removeLayer(this._layers[this._level].roomLabels)
+      }
+    },
     getLevel: function() {
         return this._level;
     },
     setLevel: function(level) {
+
         if (typeof(level) === 'object') {
             level = level.newLevel;
         }
+        console.log('Setting level to ' + level)
 
         if (this._level === level)
             return;
@@ -150,6 +177,7 @@ L.Indoor = L.Layer.extend({
         }
 
         this._level = level;
+        this.toggleLabels()
     },
     resetStyle: function (layer) {
       // reset any custom styles

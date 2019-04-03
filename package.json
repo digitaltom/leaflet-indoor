@@ -1,5 +1,5 @@
 {
-  "name": "leaflet-indor-npm",
+  "name": "leaflet-indor",
   "version": "1.0.0",
   "description": "Leaflet Indoor\r =====================",
   "main": "leaflet-indoor.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inakigarcia/leaflet-indoor.git"
+    "url": "git+https://github.com/digitaltom/leaflet-indoor.git"
   },
   "keywords": [
     "indoor"
