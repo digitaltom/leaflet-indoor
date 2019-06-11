@@ -134,10 +134,9 @@ L.Indoor = L.Layer.extend({
     showLabels: function() {
       if (this._map !== null) {
         var roomLayers = this._layers[this._level]._layers
-        console.log('draw labels for ' + this.options.loc + ' level ' + this._level)
         var indoor = this
         Object.keys(roomLayers).forEach(function(roomLayerId) {
-          if (roomLayers[roomLayerId].feature.properties.name) {
+          if (roomLayers[roomLayerId].feature && roomLayers[roomLayerId].feature.properties.name) {
             var myIcon = L.divIcon({className: 'room-label', html: roomLayers[roomLayerId].feature.properties.name});
             var textPos = roomLayers[roomLayerId].getBounds().getCenter()
             L.marker(textPos, { icon: myIcon, interactive: false }).addTo(indoor._layers[indoor._level].roomLabels);

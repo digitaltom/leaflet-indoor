@@ -11,11 +11,18 @@ displayed.
 ## Demo
 
 You can see the demo included in the example directory
-[here](http://cbaines.net/projects/osm/leaflet-indoor/examples/).
+[here](http://cbaines.net/projects/osm/leaflet-indoor/examples/). [Another example](https://digitaltom.github.io/leaflet-indoor/examples/captions.html) for showing labels on geojson objects.
 
 ## Using the plugin
 
-See the included example for usage.
+You can either use the plugin by embedding the script directly (see the included examples) or include:
+
+    "dependencies": {
+      "leaflet": "^1.5.1",
+      "leaflet-indoor": "github:digitaltom/leaflet-indoor"
+    }
+
+in yout `packages.json`.
 
 ### Basic Usage
 
@@ -42,8 +49,7 @@ Create a L.Indoor, then add the data to it.
 ### Usage Instructions
 
 The data should be a GeoJSON feature collection (or an array of GeoJSON
-features). With the standard configuration, each feature must have a property
-attribute "level", which can be a integer, string or array of either (or both).
+features). With the standard configuration, each feature must have a property attribute "level", which can be a integer, string or array of either (or both).
 
     {
         type: "FeatureCollection",
@@ -53,6 +59,7 @@ attribute "level", which can be a integer, string or array of either (or both).
                 geometry: ...,
                 properties: {
                     ...
+                    name: 'Room1',
                     level: 1
                     ....
                 }
@@ -62,6 +69,7 @@ attribute "level", which can be a integer, string or array of either (or both).
                 geometry: ...,
                 properties: {
                     ...
+                    name: 'Room2',
                     level: [2, 3]
                     ....
                 }
@@ -80,6 +88,12 @@ function, that will be used to get the level for each Feature.
 
         markerForFeature
     });
+
+or set a level for all objects of the layer:
+
+    var indoorLayer = new L.Indoor(data, {
+      level: 0
+    })    
 
 L.Control.Level is the user interface component that allows for the easy
 switching of levels. It takes in some levels (which you can get from the indoor

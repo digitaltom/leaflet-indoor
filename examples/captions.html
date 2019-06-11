@@ -3,13 +3,18 @@
 <head>
     <title>Leaflet Indoor Map Example with Captions</title>
 
+    <meta charset="utf-8"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="../leaflet-indoor.js"></script>
 
     <style type="text/css">
         html, body, #map {
-          height: 100%;
+          height: 95%;
+        }
+
+        p {
+          text-align: center;
         }
 
         .room-label {
@@ -19,7 +24,6 @@
           width: auto !important;
           height: auto !important;
         }
-
     </style>
 </head>
 
@@ -28,68 +32,112 @@
 
     <script type="text/JavaScript">
 
-    this.map = L.map('map')
+      map = L.map('map')
       // Providers: https://leaflet-extras.github.io/leaflet-providers/preview/
-      var osmUrl = 'https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png'
+      var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
       var osmAttrib = 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>'
       var osm = new L.TileLayer(osmUrl, {
-        minZoom: 2,
-        maxZoom: 20,
-        maxNativeZoom: 18,
-        zoomSnap: 0.5,
         attribution: osmAttrib
       })
-      this.map.setView(new L.LatLng(49.427, 11.126), 18)
-      this.map.addLayer(osm)
+      map.setView(new L.LatLng(49.427, 11.126), 18)
+      map.addLayer(osm)
 
-        // example date generated with http://geojson.io
-        var geoJSON =
-        {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "properties": {
-                "name": "Block 12"
-              },
-              "geometry": {
-                "type": "Polygon",
-                "coordinates": [
+      // example data generated with http://geojson.io
+      var geoJSON =
+      {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "properties": {
+              "name": "Block 12"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
                   [
-                    [
-                      11.126623749732971,
-                      49.42702918954397
-                    ],
-                    [
-                      11.126237511634827,
-                      49.427179220747966
-                    ],
-                    [
-                      11.126098036766052,
-                      49.427053613259595
-                    ],
-                    [
-                      11.126419901847838,
-                      49.426948940107
-                    ],
-                    [
-                      11.126623749732971,
-                      49.42702918954397
-                    ]
+                    11.126623749732971,
+                    49.42702918954397
+                  ],
+                  [
+                    11.126224100589752,
+                    49.427191432569956
+                  ],
+                  [
+                    11.126095354557037,
+                    49.42707280331336
+                  ],
+                  [
+                    11.126419901847838,
+                    49.426948940107
+                  ],
+                  [
+                    11.126623749732971,
+                    49.42702918954397
                   ]
                 ]
-              }
+              ]
             }
-          ]
-        }
+          },
+          {
+            "type": "Feature",
+            "properties": {
+              name: "Block 10"
+            },
+            "geometry": {
+              "type": "Polygon",
+              "coordinates": [
+                [
+                  [
+                    11.126205325126648,
+                    49.42720189984353
+                  ],
+                  [
+                    11.125743985176086,
+                    49.42739205492469
+                  ],
+                  [
+                    11.125743985176086,
+                    49.42720364438892
+                  ],
+                  [
+                    11.126076579093933,
+                    49.42708327061225
+                  ],
+                  [
+                    11.126205325126648,
+                    49.42720189984353
+                  ]
+                ]
+              ]
+            }
+          }
+        ]
+      }
 
-        var indoor = new L.Indoor(geoJSON, {
-          level: 0
-        })
-        indoor.addTo(map);
-        indoor.showLabels()
+      var indoor = new L.Indoor(geoJSON, {
+        level: 0
+      })
+      indoor.addTo(map)
+      indoor.showLabels()
+
+      // change visibility and style of caption depending on zoom level
+      map.on('zoomend', function() {
+        if (map.getZoom() >= 17) {
+          indoor.showLabels()
+        } else {
+          indoor.hideLabels()
+        }
+      })
 
     </script>
+
+    <p>
+      Example for using <a href="https://github.com/digitaltom/leaflet-indoor">leaflet-indoor</a> with captions.
+      See the <a href="https://github.com/digitaltom/leaflet-indoor/blob/master/examples/captions.html">code</a> for this example and
+      <a href="https://github.com/digitaltom/leaflet-indoor/blob/master/README.md">documentation</a> how to use leaflet indoor with captions.
+    </p>
 
     </body>
 </html>
