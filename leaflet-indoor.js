@@ -1,5 +1,3 @@
-import * as L from 'leaflet'
-
 /**
  * A layer that will display indoor data
  *
@@ -133,21 +131,24 @@ L.Indoor = L.Layer.extend({
     getLayers: function() {
         return this._layers;
     },
-    toggleLabels: function() {
-      if (this._map.getZoom() >= 20) {
+    showLabels: function() {
+      if (this._map !== null) {
         var roomLayers = this._layers[this._level]._layers
         console.log('draw labels for ' + this.options.loc + ' level ' + this._level)
         var indoor = this
         Object.keys(roomLayers).forEach(function(roomLayerId) {
-          if (roomLayers[roomLayerId].label) {
-            var myIcon = L.divIcon({className: 'room-label', html: roomLayers[roomLayerId].label});
+          if (roomLayers[roomLayerId].feature.properties.name) {
+            var myIcon = L.divIcon({className: 'room-label', html: roomLayers[roomLayerId].feature.properties.name});
             var textPos = roomLayers[roomLayerId].getBounds().getCenter()
             L.marker(textPos, { icon: myIcon, interactive: false }).addTo(indoor._layers[indoor._level].roomLabels);
           }
         })
         indoor._layers[indoor._level].addLayer(indoor._layers[indoor._level].roomLabels);
-      } else {
-      this._layers[this._level].removeLayer(this._layers[this._level].roomLabels)
+      }
+    },
+    hideLabels: function() {
+      if (this._layers !== null) {
+        this._layers[this._level].removeLayer(this._layers[this._level].roomLabels)
       }
     },
     getLevel: function() {
@@ -177,7 +178,7 @@ L.Indoor = L.Layer.extend({
         }
 
         this._level = level;
-        this.toggleLabels()
+        this.showLabels()
     },
     resetStyle: function (layer) {
       // reset any custom styles
