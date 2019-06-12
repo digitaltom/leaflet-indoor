@@ -50,6 +50,7 @@
           {
             "type": "Feature",
             "properties": {
+              level: 1,
               "name": "Block 12"
             },
             "geometry": {
@@ -83,6 +84,7 @@
           {
             "type": "Feature",
             "properties": {
+              level: 1,
               name: "Block 10"
             },
             "geometry": {
@@ -117,19 +119,9 @@
       }
 
       var indoor = new L.Indoor(geoJSON, {
-        level: 0
+        minCaptionZoom: 18
       })
       indoor.addTo(map)
-      indoor.showLabels()
-
-      // change visibility and style of caption depending on zoom level
-      map.on('zoomend', function() {
-        if (map.getZoom() >= 17) {
-          indoor.showLabels()
-        } else {
-          indoor.hideLabels()
-        }
-      })
 
     </script>
 

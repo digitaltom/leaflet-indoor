@@ -130,6 +130,17 @@ be the case.
 
     levelControl.addEventListener("levelchange", indoorLayer.setLevel, indoorLayer);
 
+#### Labels
+
+The `name` property of the features will get automatically rendered in the center of the feature,
+see the [example](https://digitaltom.github.io/leaflet-indoor/examples/captions.html).
+The library takes care automatically to show the labels of the current level, and to hide the labels
+when scrolling out. To use the labels, you need to configure the minimum zoom from where on they should get rendered:
+
+      var indoorLayer = new L.Indoor(data, {
+          minCaptionZoom: 18
+      });
+
 ## Events
 
 L.Control.Level will fire levelchange events when a level is selected.

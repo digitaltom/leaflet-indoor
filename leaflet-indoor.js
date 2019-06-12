@@ -34,7 +34,6 @@ L.Indoor = L.Layer.extend({
             var onEachFeature = this.options.onEachFeature;
 
         this.options.onEachFeature = function(feature, layer) {
-
             if (onEachFeature)
                 onEachFeature(feature, layer);
         };
@@ -43,6 +42,8 @@ L.Indoor = L.Layer.extend({
     },
     addTo: function (map) {
         map.addLayer(this);
+        var indoor = this
+        map.on('zoomend', function() { indoor.toggleLabels() })
         return this;
     },
     onAdd: function (map) {
@@ -50,7 +51,6 @@ L.Indoor = L.Layer.extend({
 
         if (this._level === null) {
             var levels = this.getLevels();
-
             if (levels.length !== 0) {
                 this._level = levels[0];
             }
@@ -63,6 +63,7 @@ L.Indoor = L.Layer.extend({
                 // TODO: Display warning?
             }
         }
+        this.toggleLabels();
     },
     onRemove: function (map) {
         if (this._level in this._layers) {
@@ -74,56 +75,62 @@ L.Indoor = L.Layer.extend({
     addData: function(data, options) {
       L.setOptions(this, options);
       options = this.options;
-        var layers = this._layers,
-            features = L.Util.isArray(data) ? data : data.features;
+      var layers = this._layers,
+          features = L.Util.isArray(data) ? data : data.features;
 
-        features.forEach(function (part) {
+      features.forEach(function (part) {
+          var level = (options.level === undefined ? options.getLevel(part) : options.level);
+          var layer;
+          if (typeof level === 'undefined' || level === null) {
+              console.log('Warn: No level set on feature, skipped.');
+              return
+          }
+          if (!("geometry" in part)) {
+              // TODO: Not sure if this is still needed/display warning
+              return;
+          }
+          // if the feature is on multiple levels
+          if (L.Util.isArray(level)) {
+              level.forEach(function(level) {
+                  if (level in layers) {
+                      layer = layers[level];
+                  } else {
+                      layer = layers[level] = L.geoJson({
+                          type: "FeatureCollection",
+                          features: []
+                      }, options);
+                      layer.roomLabels = L.featureGroup()
+                  }
 
-            // var level = options.getLevel(part);
-            var level = options.level;
-            var layer;
-
-            if (typeof level === 'undefined' ||
-                level === null) {
-                // TODO: Display warning
-
-                return;
-            }
-
-            if (!("geometry" in part)) {
-                // TODO: Not sure if this is still needed/display warning
-                return;
-            }
-
-            // if the feature is on mutiple levels
-            if (L.Util.isArray(level)) {
-                level.forEach(function(level) {
-                    if (level in layers) {
-                        layer = layers[level];
-                    } else {
-                        layer = layers[level] = L.geoJson({
-                            type: "FeatureCollection",
-                            features: []
-                        }, options);
-                        layer.roomLabels = L.featureGroup()
-                    }
-
-                    layer.addData(part);
-                });
-            } else { // feature is on a single level
-                if (level in layers) {
-                    layer = layers[level];
-                } else {
-                    layer = layers[level] = L.geoJson({
-                        type: "FeatureCollection",
-                        features: []
-                    }, options);
-                    layer.roomLabels = L.featureGroup()
-                }
-
-                layer.addData(part);
-            }
+                  layer.addData(part);
+              });
+          } else { // feature is on a single level
+              if (level in layers) {
+                  layer = layers[level];
+              } else {
+                  layer = layers[level] = L.geoJson({
+                      type: "FeatureCollection",
+                      features: []
+                  }, options);
+                  layer.roomLabels = L.featureGroup()
+              }
+              layer.addData(part);
+          }
         });
+
+        // unfortunately it's not possible to select the layer from a feature part, so we loop all again to add the labels
+        // https://github.com/Leaflet/Leaflet/issues/4115
+        Object.values(layers).forEach(function(layer) {
+          if (!layer.roomLabels._leaflet_id) {
+            Object.keys(layer._layers).forEach(function(roomLayerId) {
+              if (layer._layers[roomLayerId].feature.properties.name) {
+                var myIcon = L.divIcon({className: 'room-label', html: layer._layers[roomLayerId].feature.properties.name});
+                var textPos = layer._layers[roomLayerId].getBounds().getCenter()
+                L.marker(textPos, { icon: myIcon, interactive: false }).addTo(layer.roomLabels);
+              }
+            })
+          }
+        })
     },
     getLevels: function() {
         return Object.keys(this._layers);
@@ -131,22 +138,10 @@ L.Indoor = L.Layer.extend({
     getLayers: function() {
         return this._layers;
     },
-    showLabels: function() {
-      if (this._map !== null) {
-        var roomLayers = this._layers[this._level]._layers
-        var indoor = this
-        Object.keys(roomLayers).forEach(function(roomLayerId) {
-          if (roomLayers[roomLayerId].feature && roomLayers[roomLayerId].feature.properties.name) {
-            var myIcon = L.divIcon({className: 'room-label', html: roomLayers[roomLayerId].feature.properties.name});
-            var textPos = roomLayers[roomLayerId].getBounds().getCenter()
-            L.marker(textPos, { icon: myIcon, interactive: false }).addTo(indoor._layers[indoor._level].roomLabels);
-          }
-        })
-        indoor._layers[indoor._level].addLayer(indoor._layers[indoor._level].roomLabels);
-      }
-    },
-    hideLabels: function() {
-      if (this._layers !== null) {
+    toggleLabels: function() {
+      if (Number.isInteger(this.options.minCaptionZoom) && this._level && this._map.getZoom() >= this.options.minCaptionZoom) {
+        this._layers[this._level].addLayer(this._layers[this._level].roomLabels);
+      } else if (this._level) {
         this._layers[this._level].removeLayer(this._layers[this._level].roomLabels)
       }
     },
@@ -177,7 +172,7 @@ L.Indoor = L.Layer.extend({
         }
 
         this._level = level;
-        this.showLabels()
+        this.toggleLabels()
     },
     resetStyle: function (layer) {
       // reset any custom styles
