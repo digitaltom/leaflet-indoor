@@ -35,7 +35,7 @@
     <script type="text/JavaScript">
 
         // Create the map
-        var osmUrl = '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             osm = new L.TileLayer(osmUrl, {
                 maxZoom: 22,
                 attribution: "Map data &copy; OpenStreetMap contributors"
@@ -55,7 +55,7 @@
         $.getJSON("data.json", function(geoJSON) {
 
             var indoorLayer = new L.Indoor(geoJSON, {
-                getLevel: function(feature) { 
+                getLevel: function(feature) {
                     if (feature.properties.relations.length === 0)
                         return null;
 
