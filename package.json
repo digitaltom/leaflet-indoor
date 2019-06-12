@@ -16,10 +16,10 @@
   "keywords": [
     "indoor"
   ],
-  "author": "Christopher Baines",
+  "author": "Christopher Baines, Thomas Schmidt",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/inakigarcia/leaflet-indoor/issues"
+    "url": "https://github.com/digitaltom/leaflet-indoor/issues"
   },
-  "homepage": "https://github.com/inakigarcia/leaflet-indoor#readme"
+  "homepage": "https://github.com/digitaltom/leaflet-indoor"
 }
