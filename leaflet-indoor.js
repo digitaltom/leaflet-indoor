@@ -127,7 +127,7 @@ L.Indoor = L.Layer.extend({
         return this._layers;
     },
     toggleLabels: function() {
-      if (Number.isInteger(this.options.minCaptionZoom) && this._level && this._map.getZoom() >= this.options.minCaptionZoom) {
+      if (Number.isInteger(this.options.minCaptionZoom) && this._level !== undefined && this._map.getZoom() >= this.options.minCaptionZoom) {
         this._layers[this._level].addLayer(this._layers[this._level].roomLabels);
       } else if (this._level) {
         this._layers[this._level].removeLayer(this._layers[this._level].roomLabels)
