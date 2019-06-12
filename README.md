@@ -10,8 +10,10 @@ displayed.
 
 ## Demo
 
-You can see the demo included in the example directory
-[here](http://cbaines.net/projects/osm/leaflet-indoor/examples/). [Another example](https://digitaltom.github.io/leaflet-indoor/examples/captions.html) for showing labels on geojson objects.
+Here are some example pages to show you how to use the features of leaflet-indoor:
+
+* [Room map](https://digitaltom.github.io/leaflet-indoor/examples/index.html)
+* [Showing labels](https://digitaltom.github.io/leaflet-indoor/examples/captions.html)
 
 ## Using the plugin
 
