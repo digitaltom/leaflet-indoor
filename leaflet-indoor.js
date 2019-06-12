@@ -89,22 +89,9 @@ L.Indoor = L.Layer.extend({
               // TODO: Not sure if this is still needed/display warning
               return;
           }
-          // if the feature is on multiple levels
-          if (L.Util.isArray(level)) {
-              level.forEach(function(level) {
-                  if (level in layers) {
-                      layer = layers[level];
-                  } else {
-                      layer = layers[level] = L.geoJson({
-                          type: "FeatureCollection",
-                          features: []
-                      }, options);
-                      layer.roomLabels = L.featureGroup()
-                  }
-
-                  layer.addData(part);
-              });
-          } else { // feature is on a single level
+          // the feature could be on multiple levels
+          if (!L.Util.isArray(level)) { level = [level] }
+            level.forEach(function(level) {
               if (level in layers) {
                   layer = layers[level];
               } else {
@@ -114,8 +101,9 @@ L.Indoor = L.Layer.extend({
                   }, options);
                   layer.roomLabels = L.featureGroup()
               }
+
               layer.addData(part);
-          }
+            });
         });
 
         // unfortunately it's not possible to select the layer from a feature part, so we loop all again to add the labels
