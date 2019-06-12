@@ -34,6 +34,15 @@
     <script type="text/javascript" src="stadium.json"></script>
     <script type="text/JavaScript">
 
+      roomCallBacks = function (feature, layer) {
+        layer.on('mouseover', function () {
+          layer.setStyle({fillColor: '#02d35f'})
+        })
+        layer.on('mouseout', function () {
+          layer.setStyle({fillColor: '#c0c0c0'})
+        })
+      }
+
       map = L.map('map')
       // Providers: https://leaflet-extras.github.io/leaflet-providers/preview/
       var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -45,7 +54,8 @@
       map.addLayer(osm)
 
       var indoor = new L.Indoor(geoJSON, {
-        minCaptionZoom: 18
+        minCaptionZoom: 18,
+        onEachFeature: roomCallBacks
       })
       indoor.addTo(map)
 
