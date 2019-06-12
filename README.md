@@ -12,8 +12,9 @@ displayed.
 
 Here are some example pages to show you how to use the features of leaflet-indoor:
 
-* [Room map](https://digitaltom.github.io/leaflet-indoor/examples/index.html)
-* [Showing labels](https://digitaltom.github.io/leaflet-indoor/examples/captions.html)
+* [Stadium](https://digitaltom.github.io/leaflet-indoor/examples/captions.html) (labels, levels, callbacks)
+* [Room map](https://digitaltom.github.io/leaflet-indoor/examples/index.html) (popups, legend, levels)
+* [Live room map](https://digitaltom.github.io/leaflet-indoor/examples/live/index.html) (as before, but with public room data from openstreetmap)
 
 ## Using the plugin
 

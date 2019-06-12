@@ -31,14 +31,15 @@
 <body>
     <div id="map"></div>
 
-    <script src="../jquery.min.js"></script>
-    <script src="../leaflet-src.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"></script>
     <script src="../../leaflet-indoor.js"></script>
-    <script src="osmtogeojson.js"></script> 
+    <script src="osmtogeojson.js"></script>
     <script type="text/JavaScript">
 
         // Create the map
-        var osmUrl = '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        var osmUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             osm = new L.TileLayer(osmUrl, {
                 maxZoom: 22,
                 attribution: "Map data &copy; OpenStreetMap contributors"
@@ -58,7 +59,7 @@
         //   http://www.openstreetmap.org/relation/1370729
         var query = '(relation(1370729);>>->.rels;>;);out;';
 
-        $.get("//overpass-api.de/api/interpreter?data=" + query, function(data) {
+        $.get("https://overpass-api.de/api/interpreter?data=" + query, function(data) {
 
             var geoJSON = osmtogeojson(data, {
                 polygonFeatures: {
@@ -67,7 +68,7 @@
             });
 
             var indoorLayer = new L.Indoor(geoJSON, {
-                getLevel: function(feature) { 
+                getLevel: function(feature) {
                     if (feature.properties.relations.length === 0)
                         return null;
 
